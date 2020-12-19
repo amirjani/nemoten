@@ -1,55 +1,63 @@
-import { DynamicModule, Global, Module, OnApplicationShutdown, Scope } from "@nestjs/common";
-import { ModuleRef, REQUEST } from "@nestjs/core";
+import {
+  Global,
+  Module,
+  DynamicModule,
+  Scope,
+  OnApplicationShutdown,
+} from '@nestjs/common';
+import { REQUEST, ModuleRef } from '@nestjs/core';
+import { Request } from 'express';
+import * as mongoose from 'mongoose';
 import { ConnectionMap, ModelDefinitionMap } from "./types";
 import { CONNECTION_MAP, MODEL_DEFINITION_MAP, TENANT_CONNECTION, TENANT_MODULE_OPTIONS } from "./tenancy.constants";
-import { Request } from "express";
-import * as mongoose from 'mongoose';
+import { TenancyModuleOptions } from "./interface/tenancy-options.interface";
 
 @Global()
 @Module({})
 export class TenancyRootModule implements OnApplicationShutdown {
   constructor(private readonly moduleRef: ModuleRef) {}
 
-  // connection should be closed on shutdown
-  async onApplicationShutdown(signal?: string): Promise<any> {
-    const connectionMap: ConnectionMap = this.moduleRef.get(CONNECTION_MAP);
+  async onApplicationShutdown() {
+    const connectionMap: ConnectionMap = this.moduleRef.get(
+      CONNECTION_MAP,
+    );
     await Promise.all(
-      [...connectionMap.values()].map(connection => connection.close())
+      [...connectionMap.values()].map(connection => connection.close()),
     );
   }
 
-  static register(options: any): DynamicModule {
+  static register(options: TenancyModuleOptions): DynamicModule {
     const tenancyModuleOptions = {
       provide: TENANT_MODULE_OPTIONS,
-      useValue: { ...options }
-    }
+      useValue: { ...options },
+    };
 
     const connectionMap = {
       provide: CONNECTION_MAP,
       useFactory: (): ConnectionMap => new Map(),
-    }
+    };
 
     const modelDefinitionMap = {
       provide: MODEL_DEFINITION_MAP,
-      useFactory: (): ModelDefinitionMap => new Map()
-    }
+      useFactory: (): ModelDefinitionMap => new Map(),
+    };
 
     const tenantConnection = {
       inject: [
         REQUEST,
         TENANT_MODULE_OPTIONS,
         CONNECTION_MAP,
-        MODEL_DEFINITION_MAP
+        MODEL_DEFINITION_MAP,
       ],
       provide: TENANT_CONNECTION,
       scope: Scope.REQUEST,
       useFactory: async (
         req: Request,
-        options: any,
+        options: TenancyModuleOptions,
         connectionMap: ConnectionMap,
-        modelDefinitionMap: ModelDefinitionMap
+        modelDefinitionMap: ModelDefinitionMap,
       ): Promise<mongoose.Connection> => {
-        const tenantId = options.tenatId(req);
+        const tenantId = options.tenantId(req);
         const exists = connectionMap.has(tenantId);
         if (exists) {
           return connectionMap.get(tenantId);
@@ -57,35 +65,28 @@ export class TenancyRootModule implements OnApplicationShutdown {
         const connection = mongoose.createConnection(options.uri(tenantId), {
           useNewUrlParser: true,
           useUnifiedTopology: true,
-          ...options.options(tenantId)
+          ...options.options(tenantId),
         });
-
         modelDefinitionMap.forEach(definition => {
           const { name, schema, collection } = definition;
           connection.model(name, schema, collection);
-        })
+        });
         connectionMap.set(tenantId, connection);
         return connection;
       },
     };
 
-    const providers = {
+    const providers = [
       modelDefinitionMap,
       tenancyModuleOptions,
       tenantConnection,
-      connectionMap
-    }
+      connectionMap,
+    ];
 
     return {
       module: TenancyRootModule,
-      // @ts-ignore
       providers,
-      // @ts-ignore
-      exports: providers
-    }
-
-
-
+      exports: providers,
+    };
   }
-
 }
