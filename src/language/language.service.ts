@@ -20,6 +20,7 @@ export class LanguageService {
       nativeName: 'فارسی'
     }
 
+    console.log("LANGUAGE CREATED");
     // @ts-ignore
     return await this.languageModel.create(language);
   }
