@@ -1,15 +1,18 @@
-import { DEFAULT_TENANT_DB_CONNECTION } from "../tenancy.constants";
+import { DEFAULT_TENANT_DB_CONNECTION } from '../tenancy.constants';
 
+/**
+ * Get tenant model name formatted
+ *
+ * @export
+ * @param {string} model
+ * @returns
+ */
 export function getTenantModelToken(model: string) {
   return `${model}Model`;
 }
 
 export function getTenantModelDefinitionToken(model: string) {
-  return `${model}Definition`
-}
-
-export function getTenantId(headers: any): string{
-  return headers['tenantId'];
+  return `${model}Definition`;
 }
 
 export function getTenantConnectionToken(name?: string) {

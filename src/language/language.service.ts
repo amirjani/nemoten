@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectTenancyModel } from "../tenancy/decorator/tenancy.decorator";
+import { InjectTenancyModel } from "../tenancy/decorator";
 import { Language, LanguageDocument } from "./language.schema";
 import { Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
 export class LanguageService {
@@ -10,6 +11,16 @@ export class LanguageService {
   ) {}
 
   async create() {
-    return "salam"
+    const language: Partial<Language> = {
+      isoCode: {
+        primary: 'fa',
+        secondary: 'fas'
+      },
+      name: 'farsi',
+      nativeName: 'فارسی'
+    }
+
+    // @ts-ignore
+    return await this.languageModel.create(language);
   }
 }

@@ -7,6 +7,7 @@ import { createProviders } from "./factory";
 export class TenancyFeatureModule {
   static register(models: ModelDefinition[]): DynamicModule {
     const providers = createProviders(models)
+
     return {
       module: TenancyFeatureModule,
       providers,

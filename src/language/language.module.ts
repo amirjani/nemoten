@@ -8,7 +8,7 @@ import { LanguageController } from "./language.controller";
   imports: [
     TenancyModule.forFeature([
       {
-        name: Language.name,
+        name: "Language",
         schema: LanguageSchema
       }
     ])

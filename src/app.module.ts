@@ -8,7 +8,9 @@ import { LanguageModule } from "./language/language.module";
 @Module({
   imports: [
     TenancyModule.forRoot({
-      tenantId: (req: Request) => req.get('tenantId'),
+      tenantId: (req: Request) => {
+        req.get('tenantId')
+      },
       options: () => ({}),
       uri: (tenantId: string) => `mongodb://localhost:27017/Fabizi_${tenantId}`
     }),

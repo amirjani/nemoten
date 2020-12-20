@@ -71,6 +71,7 @@ export class TenancyRootModule implements OnApplicationShutdown {
           const { name, schema, collection } = definition;
           connection.model(name, schema, collection);
         });
+
         connectionMap.set(tenantId, connection);
         return connection;
       },
