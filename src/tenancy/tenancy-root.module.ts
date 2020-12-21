@@ -58,19 +58,23 @@ export class TenancyRootModule implements OnApplicationShutdown {
         modelDefinitionMap: ModelDefinitionMap,
       ): Promise<mongoose.Connection> => {
         const tenantId = options.tenantId(req);
-        const exists = connectionMap.has(tenantId);
-        if (exists) {
-          return connectionMap.get(tenantId);
-        }
+        //const exists = connectionMap.has(tenantId);
+        console.log("TENANCY ROOT");
+        
+        // if (exists) {
+        //   console.log("ModelDefinitionMap: ", modelDefinitionMap);
+        //   return connectionMap.get(tenantId);
+        // }
         const connection = mongoose.createConnection(options.uri(tenantId), {
           useNewUrlParser: true,
           useUnifiedTopology: true,
           ...options.options(tenantId),
         });
-        modelDefinitionMap.forEach(definition => {
-          const { name, schema, collection } = definition;
-          connection.model(name, schema, collection);
-        });
+        // modelDefinitionMap.forEach(definition => {
+        //   const { name, schema, collection } = definition;
+        //   connection.model(name, schema, collection);
+        // });
+       //  console.log("ModelDefinitionMap: ", modelDefinitionMap);
 
         connectionMap.set(tenantId, connection);
         return connection;

@@ -4,15 +4,22 @@ import { AppService } from './app.service';
 import { TenancyModule } from "./tenancy/tenancy.module";
 import { Request } from "express";
 import { LanguageModule } from "./language/language.module";
+import { CountryModule } from './country/country.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseConfigService } from './tenancy/mongoose-tenancy.service';
 
 @Module({
   imports: [
-    TenancyModule.forRoot({
-      tenantId: (req: Request) => req.get('tenantId'),
-      options: () => ({}),
-      uri: (tenantId: string) => `mongodb://localhost:27017/Fabizi_${tenantId}`
+    MongooseModule.forRootAsync({
+      useClass: MongooseConfigService,
     }),
-    LanguageModule
+    // TenancyModule.forRoot({
+    //   tenantId: (req: Request) => req.get('tenantId'),
+    //   options: () => ({}),
+    //   uri: (tenantId: string) => `mongodb://localhost:27017/Fabizi_${tenantId}`
+    // }),
+    LanguageModule,
+    //CountryModule
   ],
   controllers: [ AppController ],
   providers: [ AppService ],

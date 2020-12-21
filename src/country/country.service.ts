@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectTenancyModel } from "../tenancy/decorator";
-import { Language, LanguageDocument } from "./language.schema";
+import { Country, CountryDocument } from "./country.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
-export class LanguageService {
+export class CountryService {
   constructor(
-    @InjectModel(Language.name) private readonly languageModel: Model<LanguageDocument>
-  ) {
-    console.log("LanguageService Invoked!");
-  }
+    @InjectTenancyModel(Country.name) private readonly languageModel: Model<CountryDocument>
+  ) {}
 
   async create() {
-    const language: Partial<Language> = {
+    const language: Partial<Country> = {
       isoCode: {
         primary: 'fa',
         secondary: 'fas'

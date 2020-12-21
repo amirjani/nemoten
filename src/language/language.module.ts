@@ -3,13 +3,17 @@ import { TenancyModule } from "../tenancy/tenancy.module";
 import { Language, LanguageSchema } from "./language.schema";
 import { LanguageService } from "./language.service";
 import { LanguageController } from "./language.controller";
+import { MongooseModule } from "@nestjs/mongoose";
 
 @Module({
   imports: [
-    TenancyModule.forFeature([
+    MongooseModule.forFeatureAsync([
       {
         name: "Language",
-        schema: LanguageSchema
+        useFactory:() => {
+          console.log("ForFeatureAsync Invoked!");
+          return LanguageSchema;
+        }
       }
     ])
   ],
