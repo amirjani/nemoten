@@ -10,9 +10,7 @@ import { MongooseConfigService } from './tenancy/mongoose-tenancy.service';
 
 @Module({
   imports: [
-    MongooseModule.forRootAsync({
-      useClass: MongooseConfigService,
-    }),
+    MongooseModule.forRoot(`mongodb://localhost:27017/Fabizi_1`),
     // TenancyModule.forRoot({
     //   tenantId: (req: Request) => req.get('tenantId'),
     //   options: () => ({}),

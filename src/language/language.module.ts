@@ -7,13 +7,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
+    MongooseModule.forFeature([
       {
         name: "Language",
-        useFactory:() => {
-          console.log("ForFeatureAsync Invoked!");
-          return LanguageSchema;
-        }
+        schema: LanguageSchema
       }
     ])
 
