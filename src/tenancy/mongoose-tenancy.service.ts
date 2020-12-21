@@ -7,12 +7,13 @@ import { Request } from 'express';
 export class MongooseConfigService implements MongooseOptionsFactory {
     constructor(
         @Inject(REQUEST) private readonly request: Request) {
-            console.log("MongooseCongifService Invoked!");
+            console.log("MongooseConfigService Invoked!");
             
     }
 
     createMongooseOptions(): MongooseModuleOptions {
         return {
+            poolSize: 2,
             uri: 'mongodb://localhost:27017/Fabizi_' + this.request.query["tenantId"] as string, // Change this to whatever you want; you have full access to the request object.
         };
     }

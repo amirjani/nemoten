@@ -11,29 +11,29 @@ export const createProviders = (definitions: ModelDefinition[]): Provider[] => {
   for (const definition of definitions) {
     const { name, schema, collection } = definition;
 
-    // providers.push({
-    //   provide: getTenantModelDefinitionToken(name),
-    //   useFactory: (
-    //     modelDefinitionMap: ModelDefinitionMap,
-    //     connectionMap: ConnectionMap,
-    //   ) => {
-    //     const exists = modelDefinitionMap.has(name);
-    //     console.log("ModelDefinitionMap: ", modelDefinitionMap);
-    //     if (!exists) {
-    //       console.log("ModelDefinitionMap: ", modelDefinitionMap);
+    providers.push({
+      provide: getTenantModelDefinitionToken(name),
+      useFactory: (
+        modelDefinitionMap: ModelDefinitionMap,
+        connectionMap: ConnectionMap,
+      ) => {
+        const exists = modelDefinitionMap.has(name);
+        console.log("ModelDefinitionMap: ", modelDefinitionMap);
+        if (!exists) {
+          console.log("ModelDefinitionMap: ", modelDefinitionMap);
           
-    //       modelDefinitionMap.set(name, { ...definition });
+          modelDefinitionMap.set(name, { ...definition });
 
-    //       connectionMap.forEach((connection: Connection) => {
-    //         connection.model(name, schema, collection);
-    //       });
-    //     }
-    //   },
-    //   inject: [
-    //     MODEL_DEFINITION_MAP,
-    //     CONNECTION_MAP,
-    //   ],
-    // });
+          connectionMap.forEach((connection: Connection) => {
+            connection.model(name, schema, collection);
+          });
+        }
+      },
+      inject: [
+        MODEL_DEFINITION_MAP,
+        CONNECTION_MAP,
+      ],
+    });
 
     providers.push({
       provide: getTenantModelToken(name),

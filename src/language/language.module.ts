@@ -16,6 +16,13 @@ import { MongooseModule } from "@nestjs/mongoose";
         }
       }
     ])
+
+    // TenancyModule.forFeature([
+    //   {
+    //     name: Language.name,
+    //     schema: LanguageSchema
+    //   }
+    // ])
   ],
   providers: [ LanguageService ],
   controllers: [ LanguageController ]
