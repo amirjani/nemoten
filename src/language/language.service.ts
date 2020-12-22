@@ -12,10 +12,18 @@ const testSessionHandler = (modelProp) => (
   
   
   const originalMethod = descriptor.value;
+  const str:string = descriptor.value.toString();
+  const inputNames = str.substring(
+    str.indexOf("(") + 1, 
+    str.indexOf(")")
+  ).split(",");
+  console.log(descriptor.value.toString(),inputNames,inputNames.indexOf("tenantId"));
+  
   descriptor.value = async function (...args: any) {
-      console.log(modelProp);
-      const mainModel = this[modelProp].db.useDb(args[0], {useCache: true}).model(this[modelProp].name, this[modelProp].schema);
-      const result = await originalMethod.apply({
+      const tenantId = args[inputNames.indexOf("tenantId")];
+      // console.log(tenantId);
+      const mainModel = this[modelProp].db.useDb(tenantId, {useCache: true}).model(this[modelProp].name, this[modelProp].schema);
+      const result = await originalMethod.apply(this && {
         [modelProp]:mainModel
       }, args);
       return result;
@@ -78,7 +86,7 @@ function Emoji(name:string) {
 
 @Injectable()
 export class LanguageService {
-  @Emoji("tenantId")
+  // @Emoji("tenantId")
   private languageModel: Model<LanguageDocument>;
   constructor(
     @InjectModel(Language.name) _languageModel: Model<LanguageDocument>
@@ -87,28 +95,20 @@ export class LanguageService {
     this.languageModel = _languageModel;
   }
 
-  GetTenancyModel<T extends Document> (model: Model<T>, dbname: string) : Model<T> {
-    return model.db.useDb(dbname, {useCache: true}).model(model.name, model.schema);
-  }
-  // @testSessionHandler("languageModel")
-  async create() {
-
-    const dbs = ['Fabizi_22004', 'Fabizi_22005', 'Fabizi_22006','Fabizi_22007' ,'Fabizi_22008', 'Fabizi_22009', 'Fabizi_22010'];
-    const random = Math.floor(Math.random() * dbs.length);
-    const dbName = dbs[random];
+  
+  @testSessionHandler("languageModel")
+  async create(tenantId) {
+    
+    
     const language: Partial<Language> = {
       isoCode: {
         primary: 'fa',
         secondary: 'fas'
       },
-      tenancy: dbName,
+      tenancy: tenantId,
       name: 'farsi',
       nativeName: 'فارسی'
     }
-    // console.log(this.languageModel);
-    // console.log("LANGUAGE CREATED");
-    // const model = (this.languageModel as any ).setDb("salam")
-    
-    return await (this.languageModel as any).setDb(dbName).create(language as Language);
+    return await this.languageModel.create(language as Language);
   }
 }

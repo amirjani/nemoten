@@ -9,6 +9,9 @@ export class LanguageController {
 
   @Get()
   async create() {
-    return await this.languageService.create();
+    const dbs = ['Fabizi_22004', 'Fabizi_22005', 'Fabizi_22006','Fabizi_22007' ,'Fabizi_22008', 'Fabizi_22009', 'Fabizi_22010'];
+    const random = Math.floor(Math.random() * dbs.length);
+    const dbName = dbs[random];
+    return await this.languageService.create(dbName);
   }
 }
