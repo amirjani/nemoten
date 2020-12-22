@@ -24,6 +24,11 @@ export class Language {
   @Prop({
     type: String
   })
+  tenancy: string
+
+  @Prop({
+    type: String
+  })
   nativeName: string
 }
 
