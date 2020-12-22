@@ -34,6 +34,8 @@ function Emoji(name:string) {
     const setDb = (name) =>  {
       console.log('setDb flavor...',name);
       val.tenant = name;
+      console.log(val.schema);
+      
       const conn = val.db.useDb(val.tenant, {useCache: true}).model(val.name, val.schema);
         // if(conn) {
         //   Object.assign(conn,{ setDb })
